@@ -4,40 +4,40 @@ PATTERN_GREP="CREATE DATABASE \/\*\!32312 IF NOT EXISTS\*\/"
 
 list_databases () {
 
-        #On récupère le numéro de la dernière ligne
+        #Keep the last line number
         last_line=`wc -l $DUMP_FILE`
 
-        echo "Recherche des bases en cours, merci de patienter"
+        echo "Searching databases in progress... Thanks you wait"
         RESULT_GREP=`pp -l $DUMP_FILE | grep -n "$PATTERN_GREP"`
                                                                                                                                                                                               
         echo "---------------------------------------------------------------\n"                                                                                                              
-        echo "- Veuillez choisir une base de données :\n "                                                                                                                                    
+        echo "- Please, choose a database :\n "                                                                                                                                    
         echo "---------------------------------------------------------------\n"                                                                                                              
                                                                                                                                                                                               
-        #Pour chaque résultat du grep on sort le nom de la base                                                                                                                               
+        #For each grep result, we keep the database name 
         i=1                                                                                                                                                                                   
         for elt in $(echo $RESULT_GREP | tr -s ";" "\n" | awk '{print $7}' | tr -s "\`" " ")                                                                                                  
         do                                                                                                                                                                                    
                 echo -e "\033[1m-$i)\033[0m $elt"
                 ((i++))
         done
-        # $j représente le nombre de base contenu dans le dump
+        # $j The number of databases inside the dump
         j=$(($i-1))
 
-        read -p " Base numero ? : " return_param
+        read -p " Database number ? : " return_param
         i=1
-        #On re-parcours le résultat du grep en prenant cette fois-ci le numéro de ligne ou commence le dump de la base
+        #We parse again the grep result, but i get the line number where the database dump begin
         for elt in `echo $RESULT_GREP | tr -s ";" "\n" | awk '{print $1}' | cut -d ":" -f 1`
         do
-                #Lorsque l'on trouve la base en question
+                #When i found the selected database
                 if [[ $i -eq $return_param ]]
                 then
-                        #On récupère le numéro de ligne de commencement
+                        #I get the begin line number
                         start_line=$elt
-                        #Si c'est la dernière base de sélectionnée
+                        #If the database selectioned is the last one
                         if [[ $i -eq $j ]]
                         then
-                                #On sort, cela veut dire que la dernière ligne du fichier correspond a la dernière ligne du dump en question
+                                #We leave, because the last line of dump file, is the last line of database dump selected by the user 
                                 break;
                         else
                                 i=1
@@ -55,7 +55,7 @@ list_databases () {
                 ((i++))
         done
         echo "var1 : $start_line var2 : $last_line"
-        #On extrait la base avec sed
+        #We extract the database with sed
         sed -n '$last_line"q";$start_line,$(($last_line-1))"p"' $DUMP_FILE > export.sql
         echo "sed -n '$last_line"q";$start_line,$(($last_line-1))"p"' $DUMP_FILE > export.sql"
 }
