@@ -1,5 +1,9 @@
 #!/bin/bash
-DUMP_FILE="file1"
+
+#Please, specify the name of you sql file dump 
+DUMP_FILE="databases_dump.sql"
+
+#Pattern for grep
 PATTERN_GREP="CREATE DATABASE \/\*\!32312 IF NOT EXISTS\*\/"
 
 list_databases () {
@@ -65,7 +69,7 @@ list_databases () {
 menu() {
    echo -en "\033[32m 1) Select and extract one database\033[0m\n"
    #echo -en "\033[32m 2) Select and extract one table\033[0m\n"
-   echo -en "\033[32m 2) Sortir\033[0m\n"
+   echo -en "\033[32m 2) Exit\033[0m\n"
 }
 
 
