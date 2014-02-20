@@ -63,9 +63,9 @@ list_databases () {
 
 ################################################ MAIN ################################################
 menu() {
-   echo -en "\033[32m 1) Extraire une base de données\033[0m\n"
-   echo -en "\033[32m 3) Extraire une table en particulier\033[0m\n"
-   echo -en "\033[32m 5) Sortir\033[0m\n"
+   echo -en "\033[32m 1) Select and extract one database\033[0m\n"
+   #echo -en "\033[32m 2) Select and extract one table\033[0m\n"
+   echo -en "\033[32m 2) Sortir\033[0m\n"
 }
 
 
@@ -78,8 +78,8 @@ fi
 
 
 menu
-while read -p "Votre choix : " CHOIX; do
-   case $CHOIX in
+while read -p " Your choice ?: " CHOICE; do
+   case $CHOICE in
       1) list_databases ;;
       2) list_tables;;
       3) break;;
