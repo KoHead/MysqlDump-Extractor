@@ -6,6 +6,19 @@ DUMP_FILE="databases_dump.sql"
 #Pattern for grep
 PATTERN_GREP="CREATE DATABASE \/\*\!32312 IF NOT EXISTS\*\/"
 
+get_database_name () {
+	
+	i=1
+	for elt in $(echo $RESULT_GREP | tr -s ";" "\n" | awk '{print $7}' | tr -s "\`" " ")
+	do	
+		if [[ $i -eq $j ]]
+		then
+			return $elt
+			break;
+		fi
+		(($i++))
+	done
+}
 list_databases () {
 
         #Keep the last line number
@@ -29,8 +42,21 @@ list_databases () {
         j=$(($i-1))
 
         read -p " Database number ? : " return_param
+        
+
+	#Now, we keeping  the database name choosing by the user
         i=1
+        for elt in $(echo $RESULT_GREP | tr -s ";" "\n" | awk '{print $7}' | tr -s "\`" " ")
+        do
+                if [[ $i -eq $return_param ]]
+                then
+                       database_name=$elt
+                fi
+                ((i++))
+        done
+
         #We parse again the grep result, but i get the line number where the database dump begin
+	i=1
         for elt in `echo $RESULT_GREP | tr -s ";" "\n" | awk '{print $1}' | cut -d ":" -f 1`
         do
                 #When i found the selected database
@@ -58,10 +84,12 @@ list_databases () {
                 fi
                 ((i++))
         done
-        echo "var1 : $start_line var2 : $last_line"
-        #We extract the database with sed
-        sed -n '$last_line"q";$start_line,$(($last_line-1))"p"' $DUMP_FILE > export.sql
-        echo "sed -n '$last_line"q";$start_line,$(($last_line-1))"p"' $DUMP_FILE > export.sql"
+
+	#We extract the database with sed
+	echo "Extract in progress..."
+	sed -n '$last_line"q";$start_line,$(($last_line-1))"p"' $DUMP_FILE > $database_name.sql
+
+	echo "Your database is extracted in the $database_name.sql file"
 }
 
 
